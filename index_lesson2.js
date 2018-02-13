@@ -11,59 +11,21 @@ const config = {
 };
 const game = new Phaser.Game(config);
 
+const idle = 'idle'
 const walkLeft = 'walkLeft'
 const walkRight = 'walkRight'
 const walkUp = 'walkUp'
 const walkDown = 'walkDown'
-const spellLeft = 'spellLeft'
-const spellRight = 'spellRight'
-const spellUp = 'spellUp'
-const spellDown = 'spellDown'
 
-let currentState = walkDown
-let spriteWalkingLeft;
-let spriteWalkingRight;
-let spriteWalkingUp;
-let spriteWalkingDown;
-let spriteCastingLeft;
-let spriteCastingRight;
-let spriteCastingUp;
-let spriteCastingDown;
+let currentState = idle
+let robot;
 let cursors;
 
 function preload() {
-  this.load.spritesheet(walkLeft, "assets/walk-left.png", {
-    frameWidth: 1024,
-    frameHeight: 768,
-  });
-  this.load.spritesheet(walkRight, "assets/walk-right.png", {
-    frameWidth: 1024,
-    frameHeight: 768,
-  });
-  this.load.spritesheet(walkUp, "assets/walk-up.png", {
-    frameWidth: 1024,
-    frameHeight: 768,
-  });
-  this.load.spritesheet(walkDown, "assets/walk-down.png", {
-    frameWidth: 1024,
-    frameHeight: 768,
-  });
-  this.load.spritesheet(spellLeft, "assets/spell-left.png", {
-    frameWidth: 1024,
-    frameHeight: 1536,
-  });
-  this.load.spritesheet(spellRight, "assets/spell-right.png", {
-    frameWidth: 1024,
-    frameHeight: 1536,
-  });
-  this.load.spritesheet(spellUp, "assets/spell-up.png", {
-    frameWidth: 1024,
-    frameHeight: 1536,
-  });
-  this.load.spritesheet(spellDown, "assets/spell-down.png", {
-    frameWidth: 1024,
-    frameHeight: 1536,
-  });
+  this.load.spritesheet("robot", "assets/robot.png", {
+    frameWidth: 120,
+    frameHeight: 120,
+  });  
   this.load.image("background", "assets/background.png");
 }
 
@@ -72,18 +34,10 @@ function create() {
   const height = this.sys.game.config.height;
   this.add.image(width / 2, height / 2, "background");
   cursors = this.input.keyboard.createCursorKeys();
-  walkingLeftSprite = this.add.sprite(width / 2, height / 2, walkingLeft);
-  walkingRightSprite = this.add.sprite(width / 2, height / 2, walkingRight);
-  walkingUpSprite = this.add.sprite(width / 2, height / 2, walkingUp);
-  walkingDownSprite = this.add.sprite(width / 2, height / 2, walkingDown);
-  castingLeftSprite = this.add.sprite(width / 2, height / 2, castingLeft);
-  castingRightSprite = this.add.sprite(width / 2, height / 2, castingRight);
-  castingUpSprite = this.add.sprite(width / 2, height / 2, castingUp);
-  castingDownSprite = this.add.sprite(width / 2, height / 2, castingDown);
-
+  robot = this.add.sprite(width / 2, height / 2, "robot");
   this.anims.create({
-    key: walkingLeft,
-    frames: this.anims.generateFrameNumbers(walkingLeft, { start: 0, end: 5 }),
+    key: walkDown,
+    frames: this.anims.generateFrameNumbers("robot", { start: 0, end: 5 }),
     frameRate: 5,
     repeat: -1
   })
