@@ -72,3 +72,64 @@ function update() {
     robot.anims.stop();
   }
 }
+
+const states = {};
+
+states.idle = {
+  onEnter: () => {
+    robot.anims.stop();
+  },
+  onUpdate: () => {
+    if(cursors.left.isDown) return states.walkLeft;
+    if(cursors.right.isDown) return states.walkRight;
+    if(cursors.up.isDown) return states.walkUp;
+    if(cursors.down.isDown) return states.walkDown;
+    return states.idle;
+  },
+  onExit: () => {}
+};
+
+states.walkLeft = {
+  onEnter: () => {
+    robot.play('walk-left', true);
+  },
+  onUpdate: () => {
+    if(!cursors.left.isDown) return states.idle;
+    robot.x -= 1;
+    return states.walkLeft;
+  },
+  onExit: () => {}
+}
+states.walkRight = {
+  onEnter: () => {
+    robot.play('walk-right', true);
+  },
+  onUpdate: () => {
+    if(!cursors.right.isDown) return states.idle;
+    robot.x += 1;
+    return states.walkRight;
+  },
+  onExit: () => {}
+}
+states.walkUp = {
+  onEnter: () => {
+    robot.play('walk-up', true);
+  },
+  onUpdate: () => {
+    if(!cursors.up.isDown) return states.idle;
+    robot.y -= 1;
+    return states.walkUp;
+  },
+  onExit: () => {}
+}
+states.walkDown = {
+  onEnter: () => {
+    robot.play('walk-down', true);
+  },
+  onUpdate: () => {
+    if(!cursors.down.isDown) return states.idle;
+    robot.y += 1;
+    return states.walkDown;
+  },
+  onExit: () => {}
+}
