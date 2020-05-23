@@ -11,6 +11,13 @@ const config = {
 };
 const game = new Phaser.Game(config);
 
+const idle = 'idle'
+const walkLeft = 'walkLeft'
+const walkRight = 'walkRight'
+const walkUp = 'walkUp'
+const walkDown = 'walkDown'
+
+let currentState = idle
 let robot;
 let cursors;
 
@@ -29,49 +36,43 @@ function create() {
   cursors = this.input.keyboard.createCursorKeys();
   robot = this.add.sprite(width / 2, height / 2, "robot");
   this.anims.create({
-    key: 'walk-down',
+    key: walkDown,
     frames: this.anims.generateFrameNumbers("robot", { start: 0, end: 5 }),
     frameRate: 5,
     repeat: -1
   })
   this.anims.create({
-    key: 'walk-up',
+    key: walkUp,
     frames: this.anims.generateFrameNumbers("robot", { start: 6, end: 11 }),
     frameRate: 5,
     repeat: -1
   })
   this.anims.create({
-    key: 'walk-right',
+    key: walkRight,
     frames: this.anims.generateFrameNumbers("robot", { start: 12, end: 17 }),
     frameRate: 5,
     repeat: -1
   })
   this.anims.create({
-    key: 'walk-left',
+    key: walkLeft,
     frames: this.anims.generateFrameNumbers("robot", { start: 18, end: 23 }),
     frameRate: 5,
     repeat: -1
   })
+  currentState = idle;
+  states[currentState].onEnter();
 }
 
 function update() {
-  const speed = 1;
-  if(cursors.left.isDown) {
-    robot.x -= speed;
-    robot.play('walk-left', true);
-  } else if(cursors.right.isDown) {
-    robot.x += speed;
-    robot.play('walk-right', true);
-  } else if(cursors.up.isDown) {
-    robot.y -= speed;
-    robot.play('walk-up', true);
-  } else if(cursors.down.isDown) {
-    robot.y += speed;
-    robot.play('walk-down', true);
-  } else {
-    robot.anims.stop();
+  const nextState = states[currentState].onUpdate();
+  if(nextState !== currentState) {
+    states[currentState].onExit();
+    currentState = nextState;
+    states[currentState].onEnter();
   }
 }
+
+
 
 const states = {};
 
@@ -80,56 +81,56 @@ states.idle = {
     robot.anims.stop();
   },
   onUpdate: () => {
-    if(cursors.left.isDown) return states.walkLeft;
-    if(cursors.right.isDown) return states.walkRight;
-    if(cursors.up.isDown) return states.walkUp;
-    if(cursors.down.isDown) return states.walkDown;
-    return states.idle;
+    if(cursors.left.isDown) return walkLeft;
+    if(cursors.right.isDown) return walkRight;
+    if(cursors.up.isDown) return walkUp;
+    if(cursors.down.isDown) return walkDown;
+    return idle;
   },
   onExit: () => {}
 };
 
 states.walkLeft = {
   onEnter: () => {
-    robot.play('walk-left', true);
+    robot.play(walkLeft, true);
   },
   onUpdate: () => {
-    if(!cursors.left.isDown) return states.idle;
+    if(!cursors.left.isDown) return idle;
     robot.x -= 1;
-    return states.walkLeft;
+    return walkLeft;
   },
   onExit: () => {}
 }
 states.walkRight = {
   onEnter: () => {
-    robot.play('walk-right', true);
+    robot.play(walkRight, true);
   },
   onUpdate: () => {
-    if(!cursors.right.isDown) return states.idle;
+    if(!cursors.right.isDown) return idle;
     robot.x += 1;
-    return states.walkRight;
+    return walkRight;
   },
   onExit: () => {}
 }
 states.walkUp = {
   onEnter: () => {
-    robot.play('walk-up', true);
+    robot.play(walkUp, true);
   },
   onUpdate: () => {
-    if(!cursors.up.isDown) return states.idle;
+    if(!cursors.up.isDown) return idle;
     robot.y -= 1;
-    return states.walkUp;
+    return walkUp;
   },
   onExit: () => {}
 }
 states.walkDown = {
   onEnter: () => {
-    robot.play('walk-down', true);
+    robot.play(walkDown, true);
   },
   onUpdate: () => {
-    if(!cursors.down.isDown) return states.idle;
+    if(!cursors.down.isDown) return idle;
     robot.y += 1;
-    return states.walkDown;
+    return walkDown;
   },
   onExit: () => {}
 }
