@@ -15,7 +15,7 @@ let robot;
 let cursors;
 
 function preload() {
-  this.load.spritesheet("robot", "assets/robot-spritesheet.png", {
+  this.load.spritesheet("robot", "assets/robot.png", {
     frameWidth: 120,
     frameHeight: 120,
   });  
@@ -28,18 +28,47 @@ function create() {
   this.add.image(width / 2, height / 2, "background");
   cursors = this.input.keyboard.createCursorKeys();
   robot = this.add.sprite(width / 2, height / 2, "robot");
+  this.anims.create({
+    key: 'walk-down',
+    frames: this.anims.generateFrameNumbers("robot", { start: 0, end: 5 }),
+    frameRate: 5,
+    repeat: -1
+  })
+  this.anims.create({
+    key: 'walk-up',
+    frames: this.anims.generateFrameNumbers("robot", { start: 6, end: 11 }),
+    frameRate: 5,
+    repeat: -1
+  })
+  this.anims.create({
+    key: 'walk-right',
+    frames: this.anims.generateFrameNumbers("robot", { start: 12, end: 17 }),
+    frameRate: 5,
+    repeat: -1
+  })
+  this.anims.create({
+    key: 'walk-left',
+    frames: this.anims.generateFrameNumbers("robot", { start: 18, end: 23 }),
+    frameRate: 5,
+    repeat: -1
+  })
 }
 
 function update() {
-  const speed = 3;
+  const speed = 1;
   if(cursors.left.isDown) {
-    player.x -= speed;
+    robot.x -= speed;
+    robot.play('walk-left', true);
   } else if(cursors.right.isDown) {
-    player.x += speed;
-  }
-  if(cursors.up.isDown) {
-    player.y -= speed;
+    robot.x += speed;
+    robot.play('walk-right', true);
+  } else if(cursors.up.isDown) {
+    robot.y -= speed;
+    robot.play('walk-up', true);
   } else if(cursors.down.isDown) {
-    player.y += speed;
+    robot.y += speed;
+    robot.play('walk-down', true);
+  } else {
+    robot.anims.stop();
   }
 }
