@@ -93,6 +93,18 @@ function create() {
   girl = this.add.sprite(width / 2, height / 2, walkDown);
   girl.setScale(0.5);
 
+  // Listen for animation complete events
+  girl.on('animationcomplete', (anim) => {
+    if (
+      anim.key === spellLeft ||
+      anim.key === spellRight ||
+      anim.key === spellUp ||
+      anim.key === spellDown
+    ) {
+      girl.isCasting = false;
+    }
+  });
+
   this.anims.create({
     key: walkDown,
     frames: this.anims.generateFrameNumbers(walkDown, { start: 0, end: 8 }),
@@ -121,25 +133,25 @@ function create() {
     key: spellDown,
     frames: this.anims.generateFrameNumbers(spellDown, { start: 0, end: 22 }),
     frameRate: 10,
-    repeat: -1
+    repeat: 0
   })
   this.anims.create({
     key: spellUp,
     frames: this.anims.generateFrameNumbers(spellUp, { start: 0, end: 22 }),
     frameRate: 10,
-    repeat: -1
+    repeat: 0
   })
   this.anims.create({
     key: spellRight,
     frames: this.anims.generateFrameNumbers(spellRight, { start: 0, end: 22 }),
     frameRate: 10,
-    repeat: -1
+    repeat: 0
   })
   this.anims.create({
     key: spellLeft,
     frames: this.anims.generateFrameNumbers(spellLeft, { start: 0, end: 22 }),
     frameRate: 10,
-    repeat: -1
+    repeat: 0
   })
   currentState = walkDown;
   states[currentState].onEnter();
@@ -164,22 +176,23 @@ states.idle = {
     girl.anims.stop();
   },
   onUpdate: () => {
+    if(Phaser.Input.Keyboard.JustDown(cursors.space)) {
+      if(girl.facingDirection === walkLeft) return spellLeft;
+      if(girl.facingDirection === walkRight) return spellRight;
+      if(girl.facingDirection === walkUp) return spellUp;
+      if(girl.facingDirection === walkDown) return spellDown;
+    } 
     if(cursors.left.isDown) return walkLeft;
     if(cursors.right.isDown) return walkRight;
     if(cursors.up.isDown) return walkUp;
     if(cursors.down.isDown) return walkDown;
-    if(Phaser.Input.Keyboard.JustDown(cursors.space)) {
-      if(currentState === walkLeft) return spellLeft;
-      if(currentState === walkRight) return spellRight;
-      if(currentState === walkUp) return spellUp;
-      if(currentState === walkDown) return spellDown;
-    } 
     return idle;
   },
   onExit: () => {}
 }
 states.walkLeft = {
   onEnter: () => {
+    girl.facingDirection = walkLeft;
     girl.play(walkLeft, true);
   },
   onUpdate: () => {
@@ -191,6 +204,7 @@ states.walkLeft = {
 }
 states.walkRight = {
   onEnter: () => {
+    girl.facingDirection = walkRight;
     girl.play(walkRight, true);
   },
   onUpdate: () => {
@@ -202,6 +216,7 @@ states.walkRight = {
 }
 states.walkUp = {
   onEnter: () => {
+    girl.facingDirection = walkUp;
     girl.play(walkUp, true);
   },
   onUpdate: () => {
@@ -213,6 +228,7 @@ states.walkUp = {
 }
 states.walkDown = {
   onEnter: () => {
+    girl.facingDirection = walkDown;
     girl.play(walkDown, true);
   },
   onUpdate: () => {
@@ -224,44 +240,44 @@ states.walkDown = {
 }
 states.spellLeft = {
   onEnter: () => {
+    girl.isCasting = true
     girl.play(spellLeft, true);
   },
   onUpdate: () => {
-    if(!cursors.left.isDown) return idle;
-    girl.x -= 1;
+    if(!girl.isCasting) return idle;
     return spellLeft;
   },
   onExit: () => {}
 }
 states.spellRight = {
   onEnter: () => {
+    girl.isCasting = true
     girl.play(spellRight, true);
   },
   onUpdate: () => {
-    if(!cursors.right.isDown) return idle;
-    girl.x += 1;
+    if(!girl.isCasting) return idle;
     return spellRight;
   },
   onExit: () => {}
 }
 states.spellUp = {
   onEnter: () => {
+    girl.isCasting = true
     girl.play(spellUp, true);
   },
   onUpdate: () => {
-    if(!cursors.up.isDown) return idle;
-    girl.y -= 1;
+    if(!girl.isCasting) return idle;
     return spellUp;
   },
   onExit: () => {}
 }
 states.spellDown = {
   onEnter: () => {
+    girl.isCasting = true
     girl.play(spellDown, true);
   },
   onUpdate: () => {
-    if(!cursors.down.isDown) return idle;
-    girl.y += 1;
+    if(!girl.isCasting) return idle;
     return spellDown;
   },
   onExit: () => {}
